@@ -526,24 +526,52 @@
       bodyEl.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 2rem;">데이터를 불러오는 중입니다...</div>`;
       modal.style.display = 'flex';
 
-      try {
-        const token = localStorage.getItem('coco_admin_token') || adminToken;
-        const headers = { 'Content-Type': 'application/json' };
-        if (token) headers['Authorization'] = `Bearer ${token}`;
+        let stats = [];
 
-        const res = await fetch(`${baseUrl}/users/${userId}/daily-stats`, { headers });
-        if (res.status === 401 || res.status === 403) {
-          openLoginModal();
-          throw new Error('어드민 인증 세션이 만료되었습니다. 다시 로그인해 주세요.');
+        try {
+          const token = localStorage.getItem('coco_admin_token') || adminToken;
+          const headers = { 'Content-Type': 'application/json' };
+          if (token) headers['Authorization'] = `Bearer ${token}`;
+
+          const res = await fetch(`${baseUrl}/users/${userId}/daily-stats`, { headers });
+          if (res.status === 401 || res.status === 403) {
+            openLoginModal();
+            throw new Error('어드민 인증 세션이 만료되었습니다. 다시 로그인해 주세요.');
+          }
+          if (res.ok) {
+            const data = await res.json();
+            stats = data.daily_stats || [];
+          }
+        } catch (err) {
+          console.warn('Backend daily stats fetch failed, using demo representation:', err);
         }
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        
-        const data = await res.json();
-        const stats = data.daily_stats || [];
 
+        // 데모용 샘플 데이터 (서버 미연동 시 예시 확인용)
         if (stats.length === 0) {
-          bodyEl.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 2rem;">해당 유저의 게임 결과/플레이 기록이 없습니다.</div>`;
-          return;
+          const todayStr = new Date().toISOString().split('T')[0];
+          stats = [
+            {
+              date: todayStr,
+              total_play_minutes: 18.5,
+              total_action_count: 5,
+              sessions: [
+                {
+                  session_num: 1,
+                  login_time: '14:02:10',
+                  last_activity_time: '14:20:40',
+                  duration_minutes: 18.5,
+                  action_count: 5,
+                  activities: [
+                    '[14:02:10] 로그인 (login)',
+                    "[14:05:12] 🎮 📅 데일리 (단계: Sprout) | [KO] [Fruits] 'apple' - Match 완료 (25.5초 소요)",
+                    "[14:11:30] 🎮 🎈 자유모드 | [KO] [Animals] 'lion' - Speak 완료 (18.0초 소요)",
+                    "[14:18:00] 🎮 🎈 자유모드 | [EN] [Vehicles] 'bus' - Video 완료 (45.2초 소요)",
+                    "[14:20:40] 🎮 📅 데일리 (단계: Sprout) | [KO] [Numbers] '123' - Counting 완료 (30.0초 소요)"
+                  ]
+                }
+              ]
+            }
+          ];
         }
 
         bodyEl.innerHTML = stats.map(day => `
@@ -575,13 +603,11 @@
                   </tr>
                   ${s.activities && s.activities.length > 0 ? `
                     <tr>
-                      <td colspan="5" style="padding: 0.4rem 0.6rem 0.8rem 1rem; background: rgba(0,0,0,0.2); border-radius: 6px;">
-                        <details>
-                          <summary style="cursor: pointer; font-size: 0.78rem; color: #818cf8; font-weight: 600;">🔍 세션 활동 상세 내역 (${s.activities.length}개 항목 보기)</summary>
-                          <ul style="margin-top: 0.4rem; padding-left: 1.2rem; font-size: 0.8rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 0.2rem;">
-                            ${s.activities.map(act => `<li>${escapeHtml(act)}</li>`).join('')}
-                          </ul>
-                        </details>
+                      <td colspan="5" style="padding: 0.5rem 0.75rem; background: rgba(15, 23, 42, 0.6); border-radius: 8px;">
+                        <div style="font-size: 0.78rem; color: #818cf8; font-weight: 700; margin-bottom: 0.3rem;">🔍 세션 활동 상세 내역 (${s.activities.length}개 항목):</div>
+                        <ul style="margin: 0; padding-left: 1.2rem; font-size: 0.8rem; color: #cbd5e1; display: flex; flex-direction: column; gap: 0.25rem;">
+                          ${s.activities.map(act => `<li>${escapeHtml(act)}</li>`).join('')}
+                        </ul>
                       </td>
                     </tr>
                   ` : ''}

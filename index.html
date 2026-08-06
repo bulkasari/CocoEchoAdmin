@@ -631,13 +631,13 @@
                     </tr>
                     ${s.activities && s.activities.length > 0 ? `
                       <tr id="${drawerId}" style="display: none;">
-                        <td colspan="5" style="padding: 0.75rem 1rem; background: rgba(15, 23, 42, 0.9); border-left: 3px solid var(--accent); border-radius: 6px; margin-top: 0.3rem;">
-                          <div style="font-size: 0.8rem; color: #818cf8; font-weight: 700; margin-bottom: 0.4rem; display: flex; justify-content: space-between; align-items: center;">
-                            <span>🔍 세션 #${idx + 1} 활동 상세 로그 (${s.activities.length}개)</span>
-                            <button onclick="toggleSessionLog('${drawerId}')" style="background: transparent; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.8rem;">❌ 닫기</button>
+                        <td colspan="5" style="padding: 0.85rem 1.1rem; background: #0f172a; border: 1px solid #475569; border-left: 4px solid #6366f1; border-radius: 8px;">
+                          <div style="font-size: 0.85rem; color: #a5b4fc; font-weight: 800; margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 0.3rem;">
+                            <span>🔍 세션 #${idx + 1} 활동 상세 로그 (${s.activities.length}개 항목)</span>
+                            <button onclick="toggleSessionLog('${drawerId}')" style="background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; color: #fca5a5; padding: 0.2rem 0.5rem; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: 700;">❌ 닫기</button>
                           </div>
-                          <ul style="margin: 0; padding-left: 1.2rem; font-size: 0.8rem; color: #e2e8f0; display: flex; flex-direction: column; gap: 0.35rem; max-height: 250px; overflow-y: auto;">
-                            ${s.activities.map(act => `<li style="line-height: 1.4;">${escapeHtml(act)}</li>`).join('')}
+                          <ul style="margin: 0; padding-left: 1.2rem; font-size: 0.85rem; color: #ffffff; display: flex; flex-direction: column; gap: 0.4rem; max-height: 280px; overflow-y: auto;">
+                            ${s.activities.map(act => `<li style="line-height: 1.4; font-weight: 500;">${escapeHtml(act)}</li>`).join('')}
                           </ul>
                         </td>
                       </tr>

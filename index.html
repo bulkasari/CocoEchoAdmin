@@ -278,7 +278,7 @@
 
   <header>
     <div class="logo">
-      ⚡ CocoEcho Admin
+      ⚡ CocoEcho Admin <span style="font-size: 0.7rem; background: rgba(99, 102, 241, 0.2); border: 1px solid var(--accent); color: #a5b4fc; padding: 0.15rem 0.4rem; border-radius: 6px; margin-left: 0.5rem; vertical-align: middle;">v1.2.0-detail (2026.08.06)</span>
     </div>
     <div style="display: flex; align-items: center; gap: 1rem;">
       <div id="adminUserBadge" style="font-size: 0.85rem; color: #34d399; font-weight: 600; display: none;"></div>
@@ -511,6 +511,15 @@
       document.getElementById('loginModal').style.display = 'none';
     }
 
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
     async function openDailyStatsModal(userId, userName) {
       let baseUrl = document.getElementById('apiUrlInput').value.trim();
       if (window.location.protocol === 'https:' && baseUrl.startsWith('http://')) {
@@ -526,6 +535,7 @@
       bodyEl.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 2rem;">데이터를 불러오는 중입니다...</div>`;
       modal.style.display = 'flex';
 
+      try {
         let stats = [];
 
         try {
@@ -542,8 +552,8 @@
             const data = await res.json();
             stats = data.daily_stats || [];
           }
-        } catch (err) {
-          console.warn('Backend daily stats fetch failed, using demo representation:', err);
+        } catch (fetchErr) {
+          console.warn('Backend daily stats fetch failed, using demo representation:', fetchErr);
         }
 
         // 데모용 샘플 데이터 (서버 미연동 시 예시 확인용)

@@ -1,0 +1,20 @@
+# Dependencies / Node
+node_modules/
+.pnpm-store/
+
+# Build output
+dist/
+build/
+
+# Environment variables (기밀/설정 정보 노출 방지)
+.env
+.env.local
+.env.production
+.env.development
+*.env
+
+# IDE & System
+.DS_Store
+.vscode/
+.idea/
+*.log

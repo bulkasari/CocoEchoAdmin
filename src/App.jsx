@@ -1,5 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Shield, RefreshCw, Search, Calendar, Clock, Activity, LogIn, X, ChevronDown, ChevronUp, Lock } from 'lucide-react';
+import wordMap from './wordMap.json';
+
+// word_XXXX 단어 코드를 실제 한글 단어로 변환하는 헬퍼 함수
+function formatActivityLog(actText) {
+  if (!actText) return '';
+  return actText.replace(/word_\d+/g, (matchedCode) => {
+    const koreanWord = wordMap[matchedCode];
+    return koreanWord ? `${koreanWord} (${matchedCode})` : matchedCode;
+  });
+}
 
 export default function App() {
   const [baseUrl, setBaseUrl] = useState('https://api.cocoschool.me/api/v1');
@@ -373,7 +383,7 @@ export default function App() {
                                   </div>
                                   <ul style={{ margin: 0, paddingLeft: '1.2rem', fontSize: '0.85rem', color: '#ffffff', display: 'flex', flexDirection: 'column', gap: '0.4rem', maxHeight: '280px', overflowY: 'auto' }}>
                                     {s.activities.map((act, i) => (
-                                      <li key={i} style={{ lineHeight: 1.4, fontWeight: 500 }}>{act}</li>
+                                      <li key={i} style={{ lineHeight: 1.4, fontWeight: 500 }}>{formatActivityLog(act)}</li>
                                     ))}
                                   </ul>
                                 </td>

@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Shield, RefreshCw, Search, Calendar, Clock, Activity, LogIn, X, ChevronDown, ChevronUp, Lock } from 'lucide-react';
 import wordMap from './wordMap.json';
 
-// word_XXXX 단어 코드를 실제 한글 단어로 변환하는 헬퍼 함수
+// word_XXXX 및 aac_XXXX 코드를 실제 한글 단어/AAC 문장으로 변환하는 헬퍼 함수
 function formatActivityLog(actText) {
   if (!actText) return '';
-  return actText.replace(/word_\d+/g, (matchedCode) => {
-    const koreanWord = wordMap[matchedCode];
-    return koreanWord ? `${koreanWord} (${matchedCode})` : matchedCode;
+  return actText.replace(/(word|aac)_\d+/g, (matchedCode) => {
+    const koreanText = wordMap[matchedCode];
+    return koreanText ? `${koreanText} (${matchedCode})` : matchedCode;
   });
 }
 

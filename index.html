@@ -511,6 +511,13 @@
       document.getElementById('loginModal').style.display = 'none';
     }
 
+    function toggleSessionLog(id) {
+      const el = document.getElementById(id);
+      if (el) {
+        el.style.display = el.style.display === 'none' ? 'table-row' : 'none';
+      }
+    }
+
     function escapeHtml(str) {
       if (!str) return '';
       return String(str)
@@ -601,29 +608,42 @@
                   <th style="padding: 0.4rem 0.6rem;">🔑 로그인 시각</th>
                   <th style="padding: 0.4rem 0.6rem;">🏁 마지막 활동 시각</th>
                   <th style="padding: 0.4rem 0.6rem;">체류/플레이 시간</th>
-                  <th style="padding: 0.4rem 0.6rem;">활동 수</th>
+                  <th style="padding: 0.4rem 0.6rem;">활동 수 & 상세로그</th>
                 </tr>
               </thead>
               <tbody>
-                ${day.sessions.map((s, idx) => `
-                  <tr style="border-bottom: 1px dashed rgba(255,255,255,0.05); font-size: 0.85rem;">
-                    <td style="padding: 0.5rem 0.6rem; font-weight: 600;">세션 #${idx + 1}</td>
-                    <td style="padding: 0.5rem 0.6rem; color: #a5b4fc; font-weight: 600;">${s.login_time || '-'}</td>
-                    <td style="padding: 0.5rem 0.6rem; color: #a5b4fc;">${s.last_activity_time || '-'}</td>
-                    <td style="padding: 0.5rem 0.6rem; color: #34d399; font-weight: 700;">⏱️ ${s.duration_minutes} 분</td>
-                    <td style="padding: 0.5rem 0.6rem;">🎮 ${s.action_count} 회</td>
-                  </tr>
-                  ${s.activities && s.activities.length > 0 ? `
-                    <tr>
-                      <td colspan="5" style="padding: 0.5rem 0.75rem; background: rgba(15, 23, 42, 0.6); border-radius: 8px;">
-                        <div style="font-size: 0.78rem; color: #818cf8; font-weight: 700; margin-bottom: 0.3rem;">🔍 세션 활동 상세 내역 (${s.activities.length}개 항목):</div>
-                        <ul style="margin: 0; padding-left: 1.2rem; font-size: 0.8rem; color: #cbd5e1; display: flex; flex-direction: column; gap: 0.25rem;">
-                          ${s.activities.map(act => `<li>${escapeHtml(act)}</li>`).join('')}
-                        </ul>
+                ${day.sessions.map((s, idx) => {
+                  const drawerId = `session_log_${day.date.replace(/-/g, '_')}_${idx}`;
+                  return `
+                    <tr style="border-bottom: 1px dashed rgba(255,255,255,0.05); font-size: 0.85rem;">
+                      <td style="padding: 0.5rem 0.6rem; font-weight: 600;">세션 #${idx + 1}</td>
+                      <td style="padding: 0.5rem 0.6rem; color: #a5b4fc; font-weight: 600;">${s.login_time || '-'}</td>
+                      <td style="padding: 0.5rem 0.6rem; color: #a5b4fc;">${s.last_activity_time || '-'}</td>
+                      <td style="padding: 0.5rem 0.6rem; color: #34d399; font-weight: 700;">⏱️ ${s.duration_minutes} 분</td>
+                      <td style="padding: 0.5rem 0.6rem;">
+                        <span style="margin-right: 0.5rem;">🎮 ${s.action_count} 회</span>
+                        ${s.activities && s.activities.length > 0 ? `
+                          <button onclick="toggleSessionLog('${drawerId}')" style="background: rgba(99, 102, 241, 0.2); border: 1px solid var(--accent); color: #a5b4fc; padding: 0.25rem 0.6rem; border-radius: 6px; font-size: 0.75rem; font-weight: 600; cursor: pointer;">
+                            📜 상세 로그 보기
+                          </button>
+                        ` : ''}
                       </td>
                     </tr>
-                  ` : ''}
-                `).join('')}
+                    ${s.activities && s.activities.length > 0 ? `
+                      <tr id="${drawerId}" style="display: none;">
+                        <td colspan="5" style="padding: 0.75rem 1rem; background: rgba(15, 23, 42, 0.9); border-left: 3px solid var(--accent); border-radius: 6px; margin-top: 0.3rem;">
+                          <div style="font-size: 0.8rem; color: #818cf8; font-weight: 700; margin-bottom: 0.4rem; display: flex; justify-content: space-between; align-items: center;">
+                            <span>🔍 세션 #${idx + 1} 활동 상세 로그 (${s.activities.length}개)</span>
+                            <button onclick="toggleSessionLog('${drawerId}')" style="background: transparent; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.8rem;">❌ 닫기</button>
+                          </div>
+                          <ul style="margin: 0; padding-left: 1.2rem; font-size: 0.8rem; color: #e2e8f0; display: flex; flex-direction: column; gap: 0.35rem; max-height: 250px; overflow-y: auto;">
+                            ${s.activities.map(act => `<li style="line-height: 1.4;">${escapeHtml(act)}</li>`).join('')}
+                          </ul>
+                        </td>
+                      </tr>
+                    ` : ''}
+                  `;
+                }).join('')}
               </tbody>
             </table>
           </div>

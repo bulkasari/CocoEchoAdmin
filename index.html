@@ -373,8 +373,14 @@
     let adminToken = localStorage.getItem('coco_admin_token') || '';
 
     async function loadData() {
-      const baseUrl = document.getElementById('apiUrlInput').value.trim();
+      let baseUrl = document.getElementById('apiUrlInput').value.trim();
       const statusEl = document.getElementById('connectionStatus');
+
+      // HTTPS 환경(GitHub Pages 등)에서 http:// 차단 방지를 위한 자동 https:// 전환
+      if (window.location.protocol === 'https:' && baseUrl.startsWith('http://')) {
+        baseUrl = baseUrl.replace('http://', 'https://');
+        document.getElementById('apiUrlInput').value = baseUrl;
+      }
 
       updateAdminUserUI();
 
@@ -389,7 +395,13 @@
           headers['Authorization'] = `Bearer ${adminToken}`;
         }
 
-        const res = await fetch(`${baseUrl}/users`, {
+        // URL 엔드포인트 트레일링 슬래시 규칙 정리
+        let targetUrl = baseUrl.endsWith('/') ? `${baseUrl}users/` : `${baseUrl}/users/`;
+        if (targetUrl.includes('users//')) {
+          targetUrl = targetUrl.replace('users//', 'users/');
+        }
+
+        const res = await fetch(targetUrl, {
           method: 'GET',
           headers: headers
         });
@@ -500,7 +512,12 @@
     }
 
     async function openDailyStatsModal(userId, userName) {
-      const baseUrl = document.getElementById('apiUrlInput').value.trim();
+      let baseUrl = document.getElementById('apiUrlInput').value.trim();
+      if (window.location.protocol === 'https:' && baseUrl.startsWith('http://')) {
+        baseUrl = baseUrl.replace('http://', 'https://');
+        document.getElementById('apiUrlInput').value = baseUrl;
+      }
+
       const modal = document.getElementById('dailyModal');
       const titleEl = document.getElementById('modalTitle');
       const bodyEl = document.getElementById('modalBody');

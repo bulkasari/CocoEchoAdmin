@@ -573,6 +573,18 @@
                     <td style="padding: 0.5rem 0.6rem; color: #34d399; font-weight: 700;">⏱️ ${s.duration_minutes} 분</td>
                     <td style="padding: 0.5rem 0.6rem;">🎮 ${s.action_count} 회</td>
                   </tr>
+                  ${s.activities && s.activities.length > 0 ? `
+                    <tr>
+                      <td colspan="5" style="padding: 0.4rem 0.6rem 0.8rem 1rem; background: rgba(0,0,0,0.2); border-radius: 6px;">
+                        <details>
+                          <summary style="cursor: pointer; font-size: 0.78rem; color: #818cf8; font-weight: 600;">🔍 세션 활동 상세 내역 (${s.activities.length}개 항목 보기)</summary>
+                          <ul style="margin-top: 0.4rem; padding-left: 1.2rem; font-size: 0.8rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 0.2rem;">
+                            ${s.activities.map(act => `<li>${escapeHtml(act)}</li>`).join('')}
+                          </ul>
+                        </details>
+                      </td>
+                    </tr>
+                  ` : ''}
                 `).join('')}
               </tbody>
             </table>

@@ -185,7 +185,7 @@ export default function App() {
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <h1 style={{ fontSize: '1.4rem', fontWeight: 800 }}>CocoEcho Admin</h1>
-              <span style={{ fontSize: '0.85rem', background: '#fbbf24', color: '#0f172a', padding: '0.2rem 0.6rem', borderRadius: '20px', fontWeight: 900 }}>v0.1</span>
+              <span style={{ fontSize: '0.85rem', background: '#fbbf24', color: '#0f172a', padding: '0.2rem 0.6rem', borderRadius: '20px', fontWeight: 900 }}>v0.2.0</span>
             </div>
             <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>유저 접속 현황 & 플레이 세션 실시간 모니터링</p>
           </div>

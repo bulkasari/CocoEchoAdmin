@@ -550,7 +550,9 @@
           }
           if (res.ok) {
             const data = await res.json();
+            console.log("📌 [DEBUG API RESPONSE] /daily-stats 응답 원본 데이터:", data);
             stats = data.daily_stats || [];
+            console.log("📌 [DEBUG DAILY STATS] daily_stats 배열:", stats);
           }
         } catch (fetchErr) {
           console.warn('Backend daily stats fetch failed, using demo representation:', fetchErr);

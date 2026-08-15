@@ -11,8 +11,22 @@ function formatActivityLog(actText) {
   });
 }
 
+const ENV_PRESETS = [
+  { label: '🚀 Prod (운영)', value: 'https://api.cocoschool.me/api/v1', env: 'prod' },
+  { label: '🧪 Staging (스테이징)', value: 'https://staging-api.cocoschool.me/api/v1', env: 'staging' },
+  { label: '🛠️ Dev (개발)', value: 'https://dev-api.cocoschool.me/api/v1', env: 'dev' },
+  { label: '💻 Local (로컬)', value: 'http://localhost:8000/api/v1', env: 'local' },
+  { label: '⚙️ 직접 입력 (Custom)', value: 'custom', env: 'custom' },
+];
+
 export default function App() {
-  const [baseUrl, setBaseUrl] = useState('https://api.cocoschool.me/api/v1');
+  const [selectedEnv, setSelectedEnv] = useState(() => {
+    return localStorage.getItem('coco_admin_selected_env') || 'https://api.cocoschool.me/api/v1';
+  });
+  const [baseUrl, setBaseUrl] = useState(() => {
+    const saved = localStorage.getItem('coco_admin_selected_env');
+    return (saved && saved !== 'custom') ? saved : (localStorage.getItem('coco_admin_base_url') || 'https://api.cocoschool.me/api/v1');
+  });
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [connectionStatus, setConnectionStatus] = useState('● 서버 대기 중');
@@ -39,7 +53,17 @@ export default function App() {
 
   useEffect(() => {
     loadUsersData();
-  }, [adminToken]);
+  }, [baseUrl, adminToken]);
+
+  const handleEnvChange = (e) => {
+    const value = e.target.value;
+    setSelectedEnv(value);
+    localStorage.setItem('coco_admin_selected_env', value);
+    if (value !== 'custom') {
+      setBaseUrl(value);
+      localStorage.setItem('coco_admin_base_url', value);
+    }
+  };
 
   const loadUsersData = async () => {
     setLoading(true);
@@ -201,8 +225,49 @@ export default function App() {
             <Lock size={16} /> 어드민 로그인
           </button>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'var(--bg-dark)', padding: '0.4rem 0.8rem', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
-            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>API:</span>
-            <input type="text" value={baseUrl} onChange={(e) => setBaseUrl(e.target.value)} style={{ background: 'transparent', border: 'none', color: 'var(--text-main)', fontSize: '0.85rem', width: '220px', outline: 'none' }} />
+            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>환경:</span>
+            <select
+              value={selectedEnv}
+              onChange={handleEnvChange}
+              style={{
+                background: 'var(--bg-card)',
+                color: 'var(--text-main)',
+                border: '1px solid var(--border-color)',
+                borderRadius: '6px',
+                padding: '0.3rem 0.5rem',
+                fontSize: '0.85rem',
+                fontWeight: 600,
+                outline: 'none',
+                cursor: 'pointer'
+              }}
+            >
+              {ENV_PRESETS.map((preset) => (
+                <option key={preset.value} value={preset.value}>
+                  {preset.label}
+                </option>
+              ))}
+            </select>
+            {selectedEnv === 'custom' && (
+              <input
+                type="text"
+                value={baseUrl}
+                placeholder="https://..."
+                onChange={(e) => {
+                  setBaseUrl(e.target.value);
+                  localStorage.setItem('coco_admin_base_url', e.target.value);
+                }}
+                style={{
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  border: '1px solid var(--border-color)',
+                  color: 'var(--text-main)',
+                  fontSize: '0.85rem',
+                  width: '200px',
+                  padding: '0.25rem 0.5rem',
+                  borderRadius: '4px',
+                  outline: 'none'
+                }}
+              />
+            )}
             <button onClick={loadUsersData} style={{ background: 'var(--border-color)', border: 'none', color: 'var(--text-main)', padding: '0.3rem 0.6rem', borderRadius: '6px', cursor: 'pointer', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
               <RefreshCw size={14} className={loading ? 'spin' : ''} /> 동기화
             </button>
@@ -212,7 +277,9 @@ export default function App() {
 
       {/* Connection Notice */}
       <div style={{ background: 'var(--bg-card)', padding: '0.8rem 1.25rem', borderRadius: '12px', border: '1px solid var(--border-color)', marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.85rem' }}>
-        <span style={{ color: 'var(--text-muted)' }}>💡 <strong>운영 API 연동</strong>: 유저 실시간 접속 현황(`lastLogin`) 및 날짜별 세션 플레이 데이터를 모니터링합니다.</span>
+        <span style={{ color: 'var(--text-muted)' }}>
+          💡 <strong>서버 연동</strong>: <code>{baseUrl}</code> 환경의 유저 접속 및 플레이 세션 데이터를 실시간 모니터링합니다.
+        </span>
         <span style={{ fontWeight: 700, color: statusColor }}>{connectionStatus}</span>
       </div>
 

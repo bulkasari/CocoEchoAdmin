@@ -208,7 +208,7 @@ export default function App() {
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <h1 style={{ fontSize: '1.4rem', fontWeight: 800 }}>CocoEcho Admin</h1>
-              <span style={{ fontSize: '0.85rem', background: '#fbbf24', color: '#0f172a', padding: '0.2rem 0.6rem', borderRadius: '20px', fontWeight: 900 }}>v0.2.0</span>
+              <span style={{ fontSize: '0.85rem', background: '#fbbf24', color: '#0f172a', padding: '0.2rem 0.6rem', borderRadius: '20px', fontWeight: 900 }}>v0.3</span>
             </div>
             <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>유저 접속 현황 & 플레이 세션 실시간 모니터링</p>
           </div>
@@ -340,9 +340,25 @@ export default function App() {
                       <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{user.email}</div>
                     </td>
                     <td style={{ padding: '0.75rem 1rem' }}>
-                      <span style={{ fontSize: '0.75rem', padding: '0.2rem 0.5rem', borderRadius: '6px', fontWeight: 700, background: user.user_type === 'admin' ? 'rgba(239, 68, 68, 0.2)' : 'rgba(99, 102, 241, 0.2)', color: user.user_type === 'admin' ? '#fca5a5' : '#a5b4fc' }}>
-                        {user.user_type || 'user'}
-                      </span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
+                        <span style={{ fontSize: '0.75rem', padding: '0.2rem 0.5rem', borderRadius: '6px', fontWeight: 700, background: user.user_type === 'admin' ? 'rgba(239, 68, 68, 0.2)' : 'rgba(99, 102, 241, 0.2)', color: user.user_type === 'admin' ? '#fca5a5' : '#a5b4fc' }}>
+                          {user.user_type || 'parent'}
+                        </span>
+                        {user.appVersion ? (
+                          <span style={{ fontSize: '0.75rem', padding: '0.2rem 0.5rem', borderRadius: '6px', fontWeight: 800, background: 'rgba(56, 189, 248, 0.15)', color: '#38bdf8', border: '1px solid rgba(56, 189, 248, 0.3)' }}>
+                            v{user.appVersion}
+                          </span>
+                        ) : (
+                          <span style={{ fontSize: '0.75rem', padding: '0.2rem 0.5rem', borderRadius: '6px', color: 'var(--text-muted)', background: 'rgba(255,255,255,0.05)' }}>
+                            v-
+                          </span>
+                        )}
+                        {user.deviceOS && (
+                          <span style={{ fontSize: '0.7rem', padding: '0.15rem 0.4rem', borderRadius: '4px', background: 'rgba(255, 255, 255, 0.08)', color: '#cbd5e1' }}>
+                            {user.deviceOS.toLowerCase().includes('ios') ? '🍎 iOS' : user.deviceOS.toLowerCase().includes('android') ? '🤖 AOS' : user.deviceOS}
+                          </span>
+                        )}
+                      </div>
                     </td>
                     <td style={{ padding: '0.75rem 1rem', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
                       {user.createdAt ? new Date(user.createdAt).toLocaleString('ko-KR') : '-'}

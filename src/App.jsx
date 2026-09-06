@@ -13,17 +13,25 @@ function formatActivityLog(actText) {
 
 const ENV_PRESETS = [
   { label: '🚀 Prod (운영)', value: 'https://api.cocoschool.me/api/v1', env: 'prod' },
-  { label: '🧪 Staging (스테이징)', value: 'https://staging-api.cocoschool.me/api/v1', env: 'staging' },
   { label: '🛠️ Dev (개발)', value: 'https://desktop-c48da56.tail9ee492.ts.net/api/v1', env: 'dev' },
   { label: '⚙️ 직접 입력 (Custom)', value: 'custom', env: 'custom' },
 ];
 
 export default function App() {
   const [selectedEnv, setSelectedEnv] = useState(() => {
-    return localStorage.getItem('coco_admin_selected_env') || 'https://api.cocoschool.me/api/v1';
+    const saved = localStorage.getItem('coco_admin_selected_env');
+    if (saved === 'https://staging-api.cocoschool.me/api/v1') {
+      localStorage.setItem('coco_admin_selected_env', 'https://api.cocoschool.me/api/v1');
+      return 'https://api.cocoschool.me/api/v1';
+    }
+    return saved || 'https://api.cocoschool.me/api/v1';
   });
   const [baseUrl, setBaseUrl] = useState(() => {
     const saved = localStorage.getItem('coco_admin_selected_env');
+    if (saved === 'https://staging-api.cocoschool.me/api/v1') {
+      localStorage.setItem('coco_admin_base_url', 'https://api.cocoschool.me/api/v1');
+      return 'https://api.cocoschool.me/api/v1';
+    }
     return (saved && saved !== 'custom') ? saved : (localStorage.getItem('coco_admin_base_url') || 'https://api.cocoschool.me/api/v1');
   });
   const [users, setUsers] = useState([]);
